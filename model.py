@@ -48,11 +48,16 @@ seq_length = 5
 
 def sample(preds):
     preds = np.asarray(preds).astype('float64')
-    preds = np.log(preds)
-    exp_preds = np.exp(preds)
-    #print(exp_preds,np.sum(exp_preds))
-    preds = exp_preds/(np.sum(exp_preds) + 0.00000000001)
-    probas = np.random.multinomial(1,preds,1)
+    np.seterr(divide = 'ignore') 
+    try:
+        preds = np.log(preds)
+        exp_preds = np.exp(preds)
+        #print(exp_preds,np.sum(exp_preds))
+        preds = exp_preds/(np.sum(exp_preds))
+        probas = np.random.multinomial(1,preds,1)
+
+    except RuntimeWarning:
+        pass
     return np.argmax(probas)
 
 #Load the model
